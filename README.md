@@ -1,7 +1,7 @@
 ![GitHub top Language](https://img.shields.io/github/languages/top/tfg-projects-dit-us/SOAR4FUEBA)
-![GitHub forks](https://img.shields.io/github/forks/tfg-projects-dit-us/SOARUEBA?style=social)
+![GitHub forks](https://img.shields.io/github/forks/tfg-projects-dit-us/SOARFUEBA?style=social)
 ![GitHub contributors](https://img.shields.io/github/contributors/tfg-projects-dit-us/SOAR4FUEBA)
-![GitHub Repo stars](https://img.shields.io/github/stars/tfg-projects-dit-us/SOAR4UEBA?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/tfg-projects-dit-us/SOAR4FUEBA?style=social)
 ![GitHub repo size](https://img.shields.io/github/repo-size/tfg-projects-dit-us/SOAR4FUEBA)
 ![GitHub watchers](https://img.shields.io/github/watchers/tfg-projects-dit-us/SOAR4FUEBA)
 
