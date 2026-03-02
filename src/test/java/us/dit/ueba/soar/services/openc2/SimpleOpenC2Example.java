@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * This file is part of SOAR4UEBA - A SOAR solution based on BPM paradigm.
+ * This file is part of SOAR4FUEBA - A SOAR solution based on BPM paradigm.
  */
 package us.dit.ueba.soar.services.openc2;
 
