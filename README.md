@@ -1,17 +1,17 @@
-![GitHub top Language](https://img.shields.io/github/languages/top/tfg-projects-dit-us/SOAR4UEBA)
-![GitHub forks](https://img.shields.io/github/forks/tfg-projects-dit-us/SOAR4UEBA?style=social)
-![GitHub contributors](https://img.shields.io/github/contributors/tfg-projects-dit-us/SOAR4UEBA)
+![GitHub top Language](https://img.shields.io/github/languages/top/tfg-projects-dit-us/SOAR4FUEBA)
+![GitHub forks](https://img.shields.io/github/forks/tfg-projects-dit-us/SOARUEBA?style=social)
+![GitHub contributors](https://img.shields.io/github/contributors/tfg-projects-dit-us/SOAR4FUEBA)
 ![GitHub Repo stars](https://img.shields.io/github/stars/tfg-projects-dit-us/SOAR4UEBA?style=social)
-![GitHub repo size](https://img.shields.io/github/repo-size/tfg-projects-dit-us/SOAR4UEBA)
-![GitHub watchers](https://img.shields.io/github/watchers/tfg-projects-dit-us/SOAR4UEBA)
-![GitHub](https://img.shields.io/github/license/tfg-projects-dit-us/SOAR4UEBA)
+![GitHub repo size](https://img.shields.io/github/repo-size/tfg-projects-dit-us/SOAR4FUEBA)
+![GitHub watchers](https://img.shields.io/github/watchers/tfg-projects-dit-us/SOAR4FUEBA)
 
-# SOAR4UEBA
+
+# SOAR4FUEBA
 
 ## Introducción
-El proyecto SOAR4UEBA es una solución para la Orquestación, automatización y respuesta de seguridad (SOAR) que utiliza los estándares del OMG (BPMN y DMN) para la orquestación y automatización de procesos de seguridad en una organización. 
+El proyecto SOAR4FUEBA es una solución para la Orquestación, automatización y respuesta de seguridad (SOAR) que utiliza los estándares del OMG (BPMN y DMN) para la orquestación y automatización de procesos de seguridad en una organización. 
 
-Está desarrollada en el marco del proyecto de investigación
+Está desarrollada en el marco del proyecto de investigación PID2024-155581OB-C21 – Forensic UEBA: Detección temprana de ciberataques con custodia forense de evidencias digitales en entornos corporativos (FUEBA+)
 
 ## Estándares utilizados
 
