@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import org.oasis.openc2.lycan.OpenC2Message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Productor simple de comandos OpenC2 Envía mensajes OpenC2 a través de HTTP a
@@ -32,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class OpenC2Producer {
 
+    private static final Logger logger = LoggerFactory.getLogger(OpenC2Producer.class);
     private String serverUrl;
     private ObjectMapper mapper;
 
@@ -52,7 +55,7 @@ public class OpenC2Producer {
 
         // Serializar el mensaje a JSON
         String jsonMessage = mapper.writeValueAsString(message);
-        System.out.println("📤 Enviando comando: " + jsonMessage);
+        logger.info("📤 Enviando comando: {}", jsonMessage);
 
         // Enviar el mensaje
         try (OutputStream os = conn.getOutputStream()) {
@@ -64,7 +67,7 @@ public class OpenC2Producer {
         int responseCode = conn.getResponseCode();
         String response = new String(conn.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
 
-        System.out.println("✅ Respuesta (código " + responseCode + "): " + response);
+        logger.info("✅ Respuesta (código {}): {}", responseCode, response);
         return response;
     }
 }
