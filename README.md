@@ -43,6 +43,54 @@ Las reglas se especifican usando la notación formal DMN
 
 La versión inicial ha sido creada usando el arquetipo org.kie.kogito.kogito-springboot-archetype - 1.10.0.Final. Se ha incluido la dependencia de la librería para la gestión de openC2, que debe ser instalada previamente (como se indica en el apartado openC2)
 
+## Actualización del **24 de noviembre de 2026**
+### Migración del proyecto a versiones actuales de los frameworks utilizados
+
+| Componente  | Versión anterior | Versión nueva |
+|-------------|------------------|---------------|
+| Java        | 11               | 21            |
+| Spring Boot | 2.3.10.RELEASE   | 3.2.10        |
+| Kogito      | 1.10.0.Final     | 10.0.0 (Apache KIE) |
+
+Cambios realizados:
+
+- Se importa el BOM `org.kie.kogito:kogito-spring-boot-bom` en `dependencyManagement` para gestionar las versiones de Kogito.
+- Se sustituye el antiguo `org.kie.kogito:kogito-springboot-starter`, que ya no existe en Kogito 10, por `org.jbpm:jbpm-with-drools-spring-boot-starter`. Este starter incluye el soporte de procesos (BPMN), decisiones (DMN), reglas (DRL) y predicciones (PMML).
+- Se añade la dependencia `spring-boot-starter-webflux`.
+
+### Se añade Kafka
+
+Los procesos pueden recibir y enviar eventos a través de Kafka.
+
+Dependencias añadidas:
+
+| Dependencia | Versión | Gestionada por |
+|-------------|---------|----------------|
+| `org.kie:kie-addons-springboot-messaging` | 10.0.0 | `kogito-spring-boot-bom` |
+| `org.springframework.kafka:spring-kafka` | 3.1.9 (kafka-clients 3.6.2) | `spring-boot-starter-parent` |
+
+- El addon `kie-addons-springboot-messaging` conecta los eventos de mensaje BPMN con Kafka. Los eventos de recepción (inicio o intermedio) consumen de un topic y los eventos de envío (intermedio o fin) publican en un topic. Los eventos se intercambian en formato [CloudEvents](https://cloudevents.io/).
+- La versión de `spring-kafka` no se fija en el pom, sino que la gestiona Spring Boot. Así se garantiza la compatibilidad con Spring y Kogito. Forzar un cliente Kafka 4.x podría provocar errores al ejecutar. El cliente 3.6 funciona con brokers Kafka modernos, incluido Kafka 4.x con KRaft.
+
+Configuración en `src/main/resources/application.properties`:
+
+```properties
+spring.kafka.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+spring.kafka.consumer.group-id=soar4fueba
+spring.kafka.consumer.auto-offset-reset=earliest
+```
+
+- La dirección del broker se puede cambiar con la variable de entorno `KAFKA_BOOTSTRAP_SERVERS`.
+- El `group-id` es obligatorio: sin él la aplicación no arranca.
+- Por defecto, los mensajes se reciben del topic `kogito_incoming_stream` y se publican en `kogito_outgoing_stream`. Para asignar un topic concreto a cada mensaje BPMN:
+
+```properties
+kogito.addon.cloudevents.kafka.kogito_incoming_stream.<NombreMensaje>=<topic>
+kogito.addon.cloudevents.kafka.kogito_outgoing_stream.<NombreMensaje>=<topic>
+```
+
+En los tests (`src/test/resources/application.properties`) se desactiva el arranque de los consumidores (`spring.kafka.listener.auto-startup=false`), de modo que las pruebas no necesitan un broker Kafka en ejecución.
+
 ## Ejecución
 
 La ejecución del proyecto sería

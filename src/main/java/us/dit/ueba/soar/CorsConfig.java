@@ -30,7 +30,9 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        // Spring 5.3+ no permite "*" en allowedOrigins junto con allowCredentials(true);
+        // con un patrón se mantiene el comportamiento de aceptar cualquier origen.
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("OPTIONS");
         config.addAllowedMethod("GET");
