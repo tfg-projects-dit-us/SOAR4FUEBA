@@ -3,8 +3,8 @@
   <itemDefinition id="_A13C8801-28F2-4795-B2C4-5E98E5D66595" structureRef="String" />
   <itemDefinition id="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" structureRef="Boolean" />
   <itemDefinition id="incidenciaType" structureRef="String" />
-  <message id="_3DFA9E6F-F7BC-4F60-A1F8-30802F9E4908" itemRef="incidenciaType" name="incidencia" />
   <itemDefinition id="_AjustarLogs_InMessageType" structureRef="" />
+  <message id="_3DFA9E6F-F7BC-4F60-A1F8-30802F9E4908" itemRef="incidenciaType" name="incidencia" />
   <message id="_AjustarLogs_InMessage" itemRef="_AjustarLogs_InMessageType" />
   <interface id="_LogsService_ServiceInterface" name="us.dit.ueba.soar.services.LogsService" implementationRef="us.dit.ueba.soar.services.LogsService">
     <operation id="_LogsService_ajustarLogs_ServiceOperation" name="ajustarLogs" implementationRef="ajustarLogs">
@@ -14,7 +14,7 @@
   <process id="gestion_incidente" name="gestion-incidente" drools:packageName="us.dit.ueba.soar" drools:version="1.0" isExecutable="true" processType="Public">
     <property id="_8B197D26-0DC5-4A67-A81A-530719BA7400" name="user" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
     <property id="_C4DF1F3F-06A9-4F2E-8C59-EC7B4068D3EA" name="level" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
-    <property id="_36895BE1-80E4-4405-B232-16FC0F7783A8" name="resu" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
+    <property id="_36895BE1-80E4-4405-B232-16FC0F7783A8" name="resuelta" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
     <property id="_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C" name="incidencia" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
     <startEvent id="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" name="incidencia">
       <outgoing>_28799762-18A3-4E64-9411-DFCAEC59DFC7</outgoing>
@@ -44,7 +44,7 @@
     <userTask id="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" name="Revisar-incidencia">
       <extensionElements>
         <drools:onEntry-script scriptFormat="http://www.java.com/java">
-          <drools:script>kcontext.setVariable(&quot;resu&quot;, false);</drools:script>
+          <drools:script>kcontext.setVariable(&quot;resuelta&quot;, false);</drools:script>
         </drools:onEntry-script>
         <drools:metaData name="elementname">
           <drools:metaValue>Revisar-incidencia</drools:metaValue>
@@ -92,12 +92,12 @@
     <sequenceFlow id="_28799762-18A3-4E64-9411-DFCAEC59DFC7" sourceRef="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" targetRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" />
     <sequenceFlow id="_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA" sourceRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" targetRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" />
     <sequenceFlow id="_B01F5284-E518-4B3E-92FE-806BD0411FBD" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_017FC822-DC27-41E8-B841-7D664544C7E1">
-      <conditionExpression id="_2CC0939E-A432-418D-964C-579340287FA0" xsi:type="tFormalExpression" language="http://www.java.com/java">return Boolean.TRUE.equals(resu);</conditionExpression>
+      <conditionExpression id="_2CC0939E-A432-418D-964C-579340287FA0" xsi:type="tFormalExpression" language="http://www.java.com/java">return Boolean.TRUE.equals(resuelta);</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="_92ADB633-A9D1-470D-8B52-672CA019EC6B" sourceRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" />
     <sequenceFlow id="_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515" sourceRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" targetRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" />
     <sequenceFlow id="_17C3F881-2191-4CDC-A533-74410D2FF308" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E">
-      <conditionExpression id="_E112F38C-31D2-41B0-B050-EC6147D292FF" xsi:type="tFormalExpression" language="http://www.java.com/java">return !Boolean.TRUE.equals(resu);</conditionExpression>
+      <conditionExpression id="_E112F38C-31D2-41B0-B050-EC6147D292FF" xsi:type="tFormalExpression" language="http://www.java.com/java">return !Boolean.TRUE.equals(resuelta);</conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="_D68F9660-F36B-4A46-865E-9CF84485E7B2">

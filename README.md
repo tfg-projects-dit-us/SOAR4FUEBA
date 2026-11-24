@@ -49,14 +49,17 @@ La versión inicial ha sido creada usando el arquetipo org.kie.kogito.kogito-spr
 | Componente  | Versión anterior | Versión nueva |
 |-------------|------------------|---------------|
 | Java        | 11               | 21            |
-| Spring Boot | 2.3.10.RELEASE   | 3.2.10        |
-| Kogito      | 1.10.0.Final     | 10.0.0 (Apache KIE) |
+| Spring Boot | 2.3.10.RELEASE   | 3.5.10        |
+| Kogito      | 1.10.0.Final     | 10.2.0 (Apache KIE) |
+
+> Inicialmente se migró a Kogito 10.0.0 con Spring Boot 3.2.10. Después se subió a Kogito 10.2.0 con Spring Boot 3.5.10, la versión de Spring Boot con la que está construido Kogito 10.2.0. Así el motor queda alineado con la versión 10.2.0 de la extensión de VS Code *Apache KIE BPMN Editor* que se usa para modelar los procesos.
 
 Cambios realizados:
 
 - Se importa el BOM `org.kie.kogito:kogito-spring-boot-bom` en `dependencyManagement` para gestionar las versiones de Kogito.
 - Se sustituye el antiguo `org.kie.kogito:kogito-springboot-starter`, que ya no existe en Kogito 10, por `org.jbpm:jbpm-with-drools-spring-boot-starter`. Este starter incluye el soporte de procesos (BPMN), decisiones (DMN), reglas (DRL) y predicciones (PMML).
 - Se añade la dependencia `spring-boot-starter-webflux`.
+- Desde Kogito 10.2.0, el `kogito-maven-plugin` ya no se engancha automáticamente al ciclo de vida de Maven. Por eso se declara explícitamente su goal `generateModel`, que se ejecuta en la fase `process-classes`. Sin él no se genera el código de los procesos y decisiones, y la aplicación no arranca (falta el bean `ConfigBean`).
 
 ### Se añade Kafka
 
@@ -66,11 +69,11 @@ Dependencias añadidas:
 
 | Dependencia | Versión | Gestionada por |
 |-------------|---------|----------------|
-| `org.kie:kie-addons-springboot-messaging` | 10.0.0 | `kogito-spring-boot-bom` |
-| `org.springframework.kafka:spring-kafka` | 3.1.9 (kafka-clients 3.6.2) | `spring-boot-starter-parent` |
+| `org.kie:kie-addons-springboot-messaging` | 10.2.0 | `kogito-spring-boot-bom` |
+| `org.springframework.kafka:spring-kafka` | 3.3.12 (kafka-clients 3.9.1) | `spring-boot-starter-parent` |
 
 - El addon `kie-addons-springboot-messaging` conecta los eventos de mensaje BPMN con Kafka. Los eventos de recepción (inicio o intermedio) consumen de un topic y los eventos de envío (intermedio o fin) publican en un topic. Los eventos se intercambian en formato [CloudEvents](https://cloudevents.io/).
-- La versión de `spring-kafka` no se fija en el pom, sino que la gestiona Spring Boot. Así se garantiza la compatibilidad con Spring y Kogito. Forzar un cliente Kafka 4.x podría provocar errores al ejecutar. El cliente 3.6 funciona con brokers Kafka modernos, incluido Kafka 4.x con KRaft.
+- La versión de `spring-kafka` no se fija en el pom, sino que la gestiona Spring Boot. Así se garantiza la compatibilidad con Spring y Kogito. Forzar un cliente Kafka 4.x podría provocar errores al ejecutar. El cliente 3.9 funciona con brokers Kafka modernos, incluido Kafka 4.x con KRaft.
 
 Configuración en `src/main/resources/application.properties`:
 
