@@ -39,6 +39,9 @@ A partir de ese momento podrá incluir la dependencia en su proyecto usando
 Los procesos se especifican usando la notación formal BPMN
 Las reglas se especifican usando la notación formal DMN
 
+### OCSF
+Los mensajes de seguridad que se envían y reciben por Kafka siguen el estándar [OCSF](https://ocsf.io) (*Open Cybersecurity Schema Framework*). Las clases Java de los mensajes se generan en el build a partir de los esquemas oficiales, y los mensajes se pueden validar contra esos esquemas al ejecutar. Se explica en [ocsf.md](ocsf.md) y en el apartado [Ejecución](#ejecución).
+
 ## Versión inicial
 
 La versión inicial ha sido creada usando el arquetipo org.kie.kogito.kogito-springboot-archetype - 1.10.0.Final. Se ha incluido la dependencia de la librería para la gestión de openC2, que debe ser instalada previamente (como se indica en el apartado openC2)
@@ -96,13 +99,38 @@ En los tests (`src/test/resources/application.properties`) se desactiva el arran
 
 ## Ejecución
 
-La ejecución del proyecto sería
+Para compilar y arrancar la aplicación:
 
-- Compile and Run
+```sh
+mvn clean package spring-boot:run
+```
 
+### Esquemas OCSF: no hay que ejecutar nada antes
+
+Los esquemas OCSF se preparan con el script [src/codegen/ocsf-schemas.groovy](src/codegen/ocsf-schemas.groovy), pero **no hay que lanzarlo a mano**. Maven lo ejecuta solo en la fase `generate-sources`, que forma parte de `compile`, `test` y `package`. Cada build hace lo siguiente, en orden:
+
+1. **`generate-sources`:** el script lee `ocsf.classes` de `application.properties` y descarga de https://schema.ocsf.io el esquema de las clases que no estén ya en `src/main/resources/ocsf/schema/classes/`. Después, jsonschema2pojo genera las clases Java (`DetectionFinding`, `IncidentFinding`...) en `target/generated-sources/jsonschema2pojo`.
+2. **`compile`:** se compila el código del proyecto junto con esas clases generadas.
+3. **`process-classes`:** Kogito genera el código de los procesos BPMN y las decisiones DMN.
+4. **`test` y `package`:** se ejecutan los tests y se empaqueta el jar.
+
+Algunas consecuencias prácticas:
+
+- **`clean` no borra los esquemas.** Los esquemas descargados están en `src/` y se guardan en git. `clean` solo borra `target/`, así que en cada build únicamente se regeneran las clases Java, lo que es rápido y no necesita red.
+- **Hace falta conexión a Internet solo al descargar un esquema.** Eso ocurre la primera vez que se añade una clase a `ocsf.classes` o al forzar la actualización. El servidor tarda alrededor de un minuto por clase; las descargas se hacen en paralelo y el build muestra su progreso con mensajes `[OCSF]`.
+- **Sin conexión se puede compilar con `-o`** (`mvn -o clean package`) siempre que los esquemas ya estén descargados. Si falta alguno, el build falla e indica cuál.
+- **Para actualizar todos los esquemas** a la versión que publica ahora el servidor OCSF:
+
+    ```sh
+    mvn clean package -Docsf.refresh=true
     ```
-    mvn clean package spring-boot:run    
-    ```
+
+    Revisa los cambios con `git diff src/main/resources/ocsf` antes de subirlos: una versión nueva de OCSF puede renombrar o eliminar atributos.
+
+- **Para generar solo las clases OCSF**, sin compilar el resto ni ejecutar los tests: `mvn generate-sources`.
+- **Si el IDE no reconoce las clases generadas** (`package us.dit.ueba.soar.ocsf does not exist`), ejecuta `mvn compile` y recarga el proyecto. En VS Code: *Java: Clean Java Language Server Workspace*.
+
+Más detalles sobre OCSF en el proyecto en [ocsf.md](ocsf.md).
 
 ## Pruebas
 
