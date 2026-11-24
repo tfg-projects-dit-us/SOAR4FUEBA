@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="https://kie.org/bpmn/_25BAC837-A1A8-41EA-813C-51BE43E5456D" id="_AD2D06E3-6770-4CBE-AC67-63D1C57A4DA3" name="BPMN_C461471F-E5F2-4A01-881F-F66897D3B9DA">
+  <itemDefinition id="_A13C8801-28F2-4795-B2C4-5E98E5D66595" structureRef="String" />
+  <itemDefinition id="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" structureRef="Boolean" />
+  <itemDefinition id="incidenciaType" structureRef="String" />
+  <message id="_3DFA9E6F-F7BC-4F60-A1F8-30802F9E4908" itemRef="incidenciaType" name="incidencia" />
+  <itemDefinition id="_AjustarLogs_InMessageType" structureRef="" />
+  <message id="_AjustarLogs_InMessage" itemRef="_AjustarLogs_InMessageType" />
+  <interface id="_LogsService_ServiceInterface" name="us.dit.ueba.soar.services.LogsService" implementationRef="us.dit.ueba.soar.services.LogsService">
+    <operation id="_LogsService_ajustarLogs_ServiceOperation" name="ajustarLogs" implementationRef="ajustarLogs">
+      <inMessageRef>_AjustarLogs_InMessage</inMessageRef>
+    </operation>
+  </interface>
+  <process id="gestion_incidente" name="gestion-incidente" drools:packageName="us.dit.ueba.soar" drools:version="1.0" isExecutable="true" processType="Public">
+    <property id="_8B197D26-0DC5-4A67-A81A-530719BA7400" name="user" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+    <property id="_C4DF1F3F-06A9-4F2E-8C59-EC7B4068D3EA" name="level" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+    <property id="_36895BE1-80E4-4405-B232-16FC0F7783A8" name="resu" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
+    <property id="_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C" name="incidencia" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+    <startEvent id="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" name="incidencia">
+      <outgoing>_28799762-18A3-4E64-9411-DFCAEC59DFC7</outgoing>
+      <dataOutput name="incidencia" id="_1A96E989-838D-4369-A8DA-CB60DA6A3477" drools:dtype="String" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+      <dataOutputAssociation id="_F29C04DB-7480-4941-9AD9-578FEAC4F483">
+        <sourceRef>_1A96E989-838D-4369-A8DA-CB60DA6A3477</sourceRef>
+        <targetRef>_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C</targetRef>
+      </dataOutputAssociation>
+      <outputSet id="_5B2E8D41-7C6A-4F39-8E1D-3A9C0B7F6E25">
+        <dataOutputRefs>_1A96E989-838D-4369-A8DA-CB60DA6A3477</dataOutputRefs>
+      </outputSet>
+      <messageEventDefinition id="_CC37A757-3148-4B22-9CB6-A9F36162CFC8" drools:msgref="incidencia" messageRef="_3DFA9E6F-F7BC-4F60-A1F8-30802F9E4908" />
+    </startEvent>
+    <endEvent id="_017FC822-DC27-41E8-B841-7D664544C7E1">
+      <incoming>_B01F5284-E518-4B3E-92FE-806BD0411FBD</incoming>
+    </endEvent>
+    <exclusiveGateway id="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" gatewayDirection="Diverging">
+      <incoming>_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA</incoming>
+      <outgoing>_B01F5284-E518-4B3E-92FE-806BD0411FBD</outgoing>
+      <outgoing>_17C3F881-2191-4CDC-A533-74410D2FF308</outgoing>
+    </exclusiveGateway>
+    <exclusiveGateway id="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" gatewayDirection="Converging">
+      <incoming>_17C3F881-2191-4CDC-A533-74410D2FF308</incoming>
+      <incoming>_92ADB633-A9D1-470D-8B52-672CA019EC6B</incoming>
+      <outgoing>_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515</outgoing>
+    </exclusiveGateway>
+    <userTask id="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" name="Revisar-incidencia">
+      <extensionElements>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>kcontext.setVariable(&quot;resu&quot;, false);</drools:script>
+        </drools:onEntry-script>
+        <drools:metaData name="elementname">
+          <drools:metaValue>Revisar-incidencia</drools:metaValue>
+        </drools:metaData>
+      </extensionElements>
+      <incoming>_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515</incoming>
+      <outgoing>_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA</outgoing>
+      <ioSpecification id="_09170C75-3CB6-489F-A882-38641583053A">
+        <dataInput id="_39EFA312_TaskNameInput" name="TaskName" drools:dtype="Object" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+        <dataOutput name="resuelta" id="_AC2B17C9-3C09-4E3B-9C24-07BD9A6A02F5" drools:dtype="Boolean" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
+        <inputSet id="_37655A7B-0714-49CF-96F4-620FBEB43D3A">
+          <dataInputRefs>_39EFA312_TaskNameInput</dataInputRefs>
+        </inputSet>
+        <outputSet id="_74F8B64C-6876-40FA-A769-52C5D49DBB37">
+          <dataOutputRefs>_AC2B17C9-3C09-4E3B-9C24-07BD9A6A02F5</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataInputAssociation>
+        <targetRef>_39EFA312_TaskNameInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">RevisarIncidencia</from>
+          <to xsi:type="tFormalExpression">_39EFA312_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataOutputAssociation id="_09ECDE79-14EA-4385-9865-8B6ED95DBDC5">
+        <sourceRef>_AC2B17C9-3C09-4E3B-9C24-07BD9A6A02F5</sourceRef>
+        <targetRef>_36895BE1-80E4-4405-B232-16FC0F7783A8</targetRef>
+      </dataOutputAssociation>
+    </userTask>
+    <serviceTask id="_A6E9756B-C2B8-4EE4-A323-63446689071F" name="Ajustar logs" implementation="Java" operationRef="_LogsService_ajustarLogs_ServiceOperation" drools:serviceimplementation="Java" drools:serviceinterface="us.dit.ueba.soar.services.LogsService" drools:serviceoperation="ajustarLogs">
+      <incoming>_28799762-18A3-4E64-9411-DFCAEC59DFC7</incoming>
+      <outgoing>_92ADB633-A9D1-470D-8B52-672CA019EC6B</outgoing>
+      <ioSpecification id="_B22BA20E-7858-40D0-BE8F-11F937B68535">
+        <dataInput id="_A6E9756B_incidenciaInput" name="incidencia" drools:dtype="String" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+        <inputSet id="_76935DFB-DA41-41F0-BEBD-21290457E569">
+          <dataInputRefs>_A6E9756B_incidenciaInput</dataInputRefs>
+        </inputSet>
+        <outputSet id="_17D14050-2AA4-4FBA-B966-C65E2C26C0AD" />
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C</sourceRef>
+        <targetRef>_A6E9756B_incidenciaInput</targetRef>
+      </dataInputAssociation>
+    </serviceTask>
+    <sequenceFlow id="_28799762-18A3-4E64-9411-DFCAEC59DFC7" sourceRef="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" targetRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" />
+    <sequenceFlow id="_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA" sourceRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" targetRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" />
+    <sequenceFlow id="_B01F5284-E518-4B3E-92FE-806BD0411FBD" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_017FC822-DC27-41E8-B841-7D664544C7E1">
+      <conditionExpression id="_2CC0939E-A432-418D-964C-579340287FA0" xsi:type="tFormalExpression" language="http://www.java.com/java">return Boolean.TRUE.equals(resu);</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_92ADB633-A9D1-470D-8B52-672CA019EC6B" sourceRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" />
+    <sequenceFlow id="_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515" sourceRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" targetRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" />
+    <sequenceFlow id="_17C3F881-2191-4CDC-A533-74410D2FF308" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E">
+      <conditionExpression id="_E112F38C-31D2-41B0-B050-EC6147D292FF" xsi:type="tFormalExpression" language="http://www.java.com/java">return !Boolean.TRUE.equals(resu);</conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="_D68F9660-F36B-4A46-865E-9CF84485E7B2">
+    <bpmndi:BPMNPlane id="_A129EABF-F66C-40C0-B0F0-F7ECBA1C6F20" bpmnElement="gestion_incidente">
+      <bpmndi:BPMNShape id="_7211D30E-08F8-41A2-803C-BABFD2F43343" bpmnElement="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C">
+        <dc:Bounds x="40" y="180" width="60" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_75A76B8E-9E92-46D3-8F58-525746CC0CA9" bpmnElement="_A6E9756B-C2B8-4EE4-A323-63446689071F">
+        <dc:Bounds x="220" y="160" width="180" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_245A9F8B-13F0-4BAF-B7EE-F23A8A8626C1" bpmnElement="_39EFA312-6BD5-4A06-8B89-2C0C5087279B">
+        <dc:Bounds x="520" y="160" width="180" height="100" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5" bpmnElement="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D">
+        <dc:Bounds x="800" y="180" width="60" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_D29C3576-98F3-4880-9893-51DA4FE48457" bpmnElement="_017FC822-DC27-41E8-B841-7D664544C7E1">
+        <dc:Bounds x="1000" y="180" width="60" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EC23370C-C693-4D20-AEBE-DAA5267ED22E" bpmnElement="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E">
+        <dc:Bounds x="580" y="-20" width="60" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_972CE312-9694-49B2-AF50-424EFFEFC422" bpmnElement="_28799762-18A3-4E64-9411-DFCAEC59DFC7" sourceElement="_7211D30E-08F8-41A2-803C-BABFD2F43343" targetElement="_75A76B8E-9E92-46D3-8F58-525746CC0CA9">
+        <di:waypoint x="70" y="210" />
+        <di:waypoint x="220" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_66911421-44EC-47CF-822B-4D9A0199213D-AUTO-SOURCE-AUTO-TARGET" bpmnElement="_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA" sourceElement="_245A9F8B-13F0-4BAF-B7EE-F23A8A8626C1" targetElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5">
+        <di:waypoint x="610" y="210" />
+        <di:waypoint x="830" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_A762B006-E5E2-47A4-8AE3-47CD274B3010-AUTO-SOURCE-AUTO-TARGET" bpmnElement="_B01F5284-E518-4B3E-92FE-806BD0411FBD" sourceElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5" targetElement="_D29C3576-98F3-4880-9893-51DA4FE48457">
+        <di:waypoint x="830" y="210" />
+        <di:waypoint x="1030" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_8DEF6BD8-477F-4B8C-8580-E9309519330F" bpmnElement="_92ADB633-A9D1-470D-8B52-672CA019EC6B" sourceElement="_75A76B8E-9E92-46D3-8F58-525746CC0CA9" targetElement="_EC23370C-C693-4D20-AEBE-DAA5267ED22E">
+        <di:waypoint x="310" y="210" />
+        <di:waypoint x="310" y="10" />
+        <di:waypoint x="580" y="10" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_14E902EB-5AD4-4185-BB3B-E59B1FA960D8" bpmnElement="_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515" sourceElement="_EC23370C-C693-4D20-AEBE-DAA5267ED22E" targetElement="_245A9F8B-13F0-4BAF-B7EE-F23A8A8626C1">
+        <di:waypoint x="610" y="10" />
+        <di:waypoint x="610" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_80C68038-1C3C-4872-BBE5-D655A7044842" bpmnElement="_17C3F881-2191-4CDC-A533-74410D2FF308" sourceElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5" targetElement="_EC23370C-C693-4D20-AEBE-DAA5267ED22E">
+        <di:waypoint x="830" y="180" />
+        <di:waypoint x="830" y="10" />
+        <di:waypoint x="640" y="10" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
