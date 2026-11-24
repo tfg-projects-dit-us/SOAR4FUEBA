@@ -20,6 +20,9 @@
   <properties>
     <java.version>21</java.version>
     <kogito.version>10.2.0</kogito.version>
+    <!-- Paquete de las clases OCSF generadas (ver src/codegen/ocsf-schemas.groovy) -->
+    <ocsf.java.package>us.dit.ueba.soar.ocsf</ocsf.java.package>
+    <groovy.version>4.0.33</groovy.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -57,6 +60,13 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <!-- Validación de eventos OCSF contra su JSON Schema.
+         Se usa la rama 1.5.x: la 3.x requiere Jackson 3, incompatible con Spring Boot 3.5 -->
+    <dependency>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>1.5.9</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -99,6 +109,90 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <!-- Declara explícitamente la carpeta de los POJOs OCSF generados para que los IDE
+           (VS Code / Eclipse) la reconozcan como código fuente; Maven ya la usa sin esto -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>ocsf-generated-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/jsonschema2pojo</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- OCSF (1/2): descarga los JSON Schema de las clases listadas en ocsf.classes
+           (application.properties) y los prepara en target/ocsf-codegen.
+           Debe ir antes que jsonschema2pojo: ambos se ejecutan en generate-sources -->
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>5.1.0</version>
+        <executions>
+          <execution>
+            <id>ocsf-schemas</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <scripts>
+                <script>${project.basedir}/src/codegen/ocsf-schemas.groovy</script>
+              </scripts>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>${groovy.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>${groovy.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <!-- OCSF (2/2): genera los POJOs (Jackson) a partir de target/ocsf-codegen -->
+      <plugin>
+        <groupId>org.jsonschema2pojo</groupId>
+        <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <sourceDirectory>${project.build.directory}/ocsf-codegen</sourceDirectory>
+          <targetPackage>${ocsf.java.package}</targetPackage>
+          <annotationStyle>jackson2</annotationStyle>
+          <!-- Conserva en un Map los atributos no declarados (extensiones, perfiles...) -->
+          <includeAdditionalProperties>true</includeAdditionalProperties>
+          <!-- Los tiempos OCSF son epoch en milisegundos: no caben en Integer -->
+          <useLongIntegers>true</useLongIntegers>
+          <inclusionLevel>NON_NULL</inclusionLevel>
+          <!-- Listas a null si no vienen en el mensaje: así no se añaden "[]" al reenviarlo -->
+          <initializeCollections>false</initializeCollections>
+          <generateBuilders>true</generateBuilders>
+          <serializable>true</serializable>
+          <targetVersion>${java.version}</targetVersion>
+          <includeGeneratedAnnotation>false</includeGeneratedAnnotation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
