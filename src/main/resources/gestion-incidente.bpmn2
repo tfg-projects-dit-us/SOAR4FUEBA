@@ -29,12 +29,12 @@
       <messageEventDefinition id="_CC37A757-3148-4B22-9CB6-A9F36162CFC8" drools:msgref="incidencia" messageRef="_3DFA9E6F-F7BC-4F60-A1F8-30802F9E4908" />
     </startEvent>
     <endEvent id="_017FC822-DC27-41E8-B841-7D664544C7E1">
-      <incoming>_B01F5284-E518-4B3E-92FE-806BD0411FBD</incoming>
+      <incoming>_5E271B0A-46A4-4EFD-A09E-2399E47819BA</incoming>
     </endEvent>
     <exclusiveGateway id="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" gatewayDirection="Diverging">
       <incoming>_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA</incoming>
-      <outgoing>_B01F5284-E518-4B3E-92FE-806BD0411FBD</outgoing>
       <outgoing>_17C3F881-2191-4CDC-A533-74410D2FF308</outgoing>
+      <outgoing>_94B79310-9C23-4015-886D-41DF5E468A72</outgoing>
     </exclusiveGateway>
     <exclusiveGateway id="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" gatewayDirection="Converging">
       <incoming>_17C3F881-2191-4CDC-A533-74410D2FF308</incoming>
@@ -74,31 +74,64 @@
         <targetRef>_36895BE1-80E4-4405-B232-16FC0F7783A8</targetRef>
       </dataOutputAssociation>
     </userTask>
+    <serviceTask id="_5526E417-2590-4FBE-8BE4-3A1CCF44C039" name="Reajustar Logs" implementation="Java" operationRef="_LogsService_ajustarLogs_ServiceOperation" drools:serviceimplementation="Java" drools:serviceinterface="us.dit.ueba.soar.services.LogsService" drools:serviceoperation="ajustarLogs">
+      <incoming>_94B79310-9C23-4015-886D-41DF5E468A72</incoming>
+      <outgoing>_5E271B0A-46A4-4EFD-A09E-2399E47819BA</outgoing>
+      <ioSpecification id="_2EF55E03-D9DF-4552-9A68-22F3DCBD196C">
+        <dataInput id="_269761E6-D26B-441D-BA65-A40DD4297A86" name="level" drools:dtype="String" itemSubjectRef="incidenciaType" />
+        <dataInput id="_FCA21C7E-7B84-492A-AB09-517FABBCC088" name="incidencia" drools:dtype="String" itemSubjectRef="incidenciaType" />
+        <inputSet id="_6FCFD64F-A4E3-482A-ADA6-E5E750B1205A">
+          <dataInputRefs>_269761E6-D26B-441D-BA65-A40DD4297A86</dataInputRefs>
+          <dataInputRefs>_FCA21C7E-7B84-492A-AB09-517FABBCC088</dataInputRefs>
+        </inputSet>
+        <outputSet id="_E56F0809-D1EB-455D-BEAA-4ED943F40509" />
+      </ioSpecification>
+      <dataInputAssociation id="_FCFA9946-5342-49E5-AA56-CDFA718866FF">
+        <sourceRef>_C4DF1F3F-06A9-4F2E-8C59-EC7B4068D3EA</sourceRef>
+        <targetRef>_269761E6-D26B-441D-BA65-A40DD4297A86</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation id="_3B52E0B1-C2A7-4302-B2F1-245CEE59427B">
+        <sourceRef>_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C</sourceRef>
+        <targetRef>_FCA21C7E-7B84-492A-AB09-517FABBCC088</targetRef>
+      </dataInputAssociation>
+    </serviceTask>
     <serviceTask id="_A6E9756B-C2B8-4EE4-A323-63446689071F" name="Ajustar logs" implementation="Java" operationRef="_LogsService_ajustarLogs_ServiceOperation" drools:serviceimplementation="Java" drools:serviceinterface="us.dit.ueba.soar.services.LogsService" drools:serviceoperation="ajustarLogs">
+      <extensionElements>
+        <drools:onEntry-script scriptFormat="http://www.java.com/java">
+          <drools:script>kcontext.setVariable(&quot;level&quot;,&quot;uno&quot;);</drools:script>
+        </drools:onEntry-script>
+      </extensionElements>
       <incoming>_28799762-18A3-4E64-9411-DFCAEC59DFC7</incoming>
       <outgoing>_92ADB633-A9D1-470D-8B52-672CA019EC6B</outgoing>
-      <ioSpecification id="_B22BA20E-7858-40D0-BE8F-11F937B68535">
-        <dataInput id="_A6E9756B_incidenciaInput" name="incidencia" drools:dtype="String" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
-        <inputSet id="_76935DFB-DA41-41F0-BEBD-21290457E569">
-          <dataInputRefs>_A6E9756B_incidenciaInput</dataInputRefs>
+      <ioSpecification id="_1DB4236E-607A-49D7-9016-13C41819E98A">
+        <dataInput id="_191776A9-4765-4131-A5F7-A2DF61F5FBDC" name="level" drools:dtype="String" itemSubjectRef="incidenciaType" />
+        <dataInput id="_12EA1A4D-3FB0-4217-A1B5-65E407D89420" name="incidencia" drools:dtype="String" itemSubjectRef="incidenciaType" />
+        <inputSet id="_80820A48-F02B-4577-9861-76BDE73DB912">
+          <dataInputRefs>_191776A9-4765-4131-A5F7-A2DF61F5FBDC</dataInputRefs>
+          <dataInputRefs>_12EA1A4D-3FB0-4217-A1B5-65E407D89420</dataInputRefs>
         </inputSet>
-        <outputSet id="_17D14050-2AA4-4FBA-B966-C65E2C26C0AD" />
+        <outputSet id="_EB9A2858-309E-42CA-B9BC-A1E2BB704914" />
       </ioSpecification>
-      <dataInputAssociation>
+      <dataInputAssociation id="_3BE2AA27-4AA2-4C46-83D0-59A74E61C87D">
+        <sourceRef>_C4DF1F3F-06A9-4F2E-8C59-EC7B4068D3EA</sourceRef>
+        <targetRef>_191776A9-4765-4131-A5F7-A2DF61F5FBDC</targetRef>
+      </dataInputAssociation>
+      <dataInputAssociation id="_A5A08D1B-195A-4747-B38A-5C27D7FD7165">
         <sourceRef>_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C</sourceRef>
-        <targetRef>_A6E9756B_incidenciaInput</targetRef>
+        <targetRef>_12EA1A4D-3FB0-4217-A1B5-65E407D89420</targetRef>
       </dataInputAssociation>
     </serviceTask>
     <sequenceFlow id="_28799762-18A3-4E64-9411-DFCAEC59DFC7" sourceRef="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" targetRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" />
     <sequenceFlow id="_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA" sourceRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" targetRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" />
-    <sequenceFlow id="_B01F5284-E518-4B3E-92FE-806BD0411FBD" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_017FC822-DC27-41E8-B841-7D664544C7E1">
-      <conditionExpression id="_2CC0939E-A432-418D-964C-579340287FA0" xsi:type="tFormalExpression" language="http://www.java.com/java">return Boolean.TRUE.equals(resuelta);</conditionExpression>
-    </sequenceFlow>
     <sequenceFlow id="_92ADB633-A9D1-470D-8B52-672CA019EC6B" sourceRef="_A6E9756B-C2B8-4EE4-A323-63446689071F" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" />
     <sequenceFlow id="_BD5BFB38-AAAF-4CE7-8330-3AEBDD323515" sourceRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E" targetRef="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" />
     <sequenceFlow id="_17C3F881-2191-4CDC-A533-74410D2FF308" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E">
       <conditionExpression id="_E112F38C-31D2-41B0-B050-EC6147D292FF" xsi:type="tFormalExpression" language="http://www.java.com/java">return !Boolean.TRUE.equals(resuelta);</conditionExpression>
     </sequenceFlow>
+    <sequenceFlow id="_94B79310-9C23-4015-886D-41DF5E468A72" sourceRef="_7F5B55F1-7A6D-420C-ADC1-F3EDC571B27D" targetRef="_5526E417-2590-4FBE-8BE4-3A1CCF44C039">
+      <conditionExpression id="_9CF79AC2-7135-490A-B3F9-E651CC70B0E6" xsi:type="tFormalExpression" language="http://www.java.com/java">return Boolean.TRUE.equals(resuelta);</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="_5E271B0A-46A4-4EFD-A09E-2399E47819BA" sourceRef="_5526E417-2590-4FBE-8BE4-3A1CCF44C039" targetRef="_017FC822-DC27-41E8-B841-7D664544C7E1" />
   </process>
   <bpmndi:BPMNDiagram id="_D68F9660-F36B-4A46-865E-9CF84485E7B2">
     <bpmndi:BPMNPlane id="_A129EABF-F66C-40C0-B0F0-F7ECBA1C6F20" bpmnElement="gestion_incidente">
@@ -115,10 +148,13 @@
         <dc:Bounds x="800" y="180" width="60" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_D29C3576-98F3-4880-9893-51DA4FE48457" bpmnElement="_017FC822-DC27-41E8-B841-7D664544C7E1">
-        <dc:Bounds x="1000" y="180" width="60" height="60" />
+        <dc:Bounds x="1280" y="180" width="60" height="60" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_EC23370C-C693-4D20-AEBE-DAA5267ED22E" bpmnElement="_C1CBCC08-D56F-4299-B0A8-7C964D0D761E">
         <dc:Bounds x="580" y="-20" width="60" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_63B1EFFC-84F7-4B9B-971B-EB9107E251C7" bpmnElement="_5526E417-2590-4FBE-8BE4-3A1CCF44C039">
+        <dc:Bounds x="960" y="160" width="180" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="_972CE312-9694-49B2-AF50-424EFFEFC422" bpmnElement="_28799762-18A3-4E64-9411-DFCAEC59DFC7" sourceElement="_7211D30E-08F8-41A2-803C-BABFD2F43343" targetElement="_75A76B8E-9E92-46D3-8F58-525746CC0CA9">
         <di:waypoint x="70" y="210" />
@@ -127,10 +163,6 @@
       <bpmndi:BPMNEdge id="_66911421-44EC-47CF-822B-4D9A0199213D-AUTO-SOURCE-AUTO-TARGET" bpmnElement="_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA" sourceElement="_245A9F8B-13F0-4BAF-B7EE-F23A8A8626C1" targetElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5">
         <di:waypoint x="610" y="210" />
         <di:waypoint x="830" y="210" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="_A762B006-E5E2-47A4-8AE3-47CD274B3010-AUTO-SOURCE-AUTO-TARGET" bpmnElement="_B01F5284-E518-4B3E-92FE-806BD0411FBD" sourceElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5" targetElement="_D29C3576-98F3-4880-9893-51DA4FE48457">
-        <di:waypoint x="830" y="210" />
-        <di:waypoint x="1030" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="_8DEF6BD8-477F-4B8C-8580-E9309519330F" bpmnElement="_92ADB633-A9D1-470D-8B52-672CA019EC6B" sourceElement="_75A76B8E-9E92-46D3-8F58-525746CC0CA9" targetElement="_EC23370C-C693-4D20-AEBE-DAA5267ED22E">
         <di:waypoint x="310" y="210" />
@@ -145,6 +177,14 @@
         <di:waypoint x="830" y="180" />
         <di:waypoint x="830" y="10" />
         <di:waypoint x="640" y="10" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_602B3446-F560-40DB-AA1D-ADEB99428FDB" bpmnElement="_94B79310-9C23-4015-886D-41DF5E468A72" sourceElement="_60E0E4BE-5FA4-4800-B424-BDAD7BA35DF5" targetElement="_63B1EFFC-84F7-4B9B-971B-EB9107E251C7">
+        <di:waypoint x="830" y="210" />
+        <di:waypoint x="960" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_D93CBE23-960D-4404-A5BD-96F50116133D" bpmnElement="_5E271B0A-46A4-4EFD-A09E-2399E47819BA" sourceElement="_63B1EFFC-84F7-4B9B-971B-EB9107E251C7" targetElement="_D29C3576-98F3-4880-9893-51DA4FE48457">
+        <di:waypoint x="1140" y="210" />
+        <di:waypoint x="1310" y="210" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

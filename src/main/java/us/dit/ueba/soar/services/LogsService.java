@@ -13,7 +13,7 @@ public class LogsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogsService.class);
 
-    public void ajustarLogs(String incidencia) {
-        LOG.info("Ajustando logs para la incidencia: {}", incidencia);
+    public void ajustarLogs(String level,String incidencia) {
+        LOG.info("Ajustando logs para el nivel: {}, incidencia: {}", level, incidencia);
     }
 }
