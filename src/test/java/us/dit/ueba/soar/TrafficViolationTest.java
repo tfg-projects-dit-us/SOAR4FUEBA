@@ -40,6 +40,7 @@ public class TrafficViolationTest {
     public void testEvaluateTrafficViolation() {
         RestAssured.port = port;
         given()
+               .auth().preemptive().basic("analista", "analista")
                .body("{\n" +
                      "    \"Driver\": {\n" +
                      "        \"Points\": 2\n" +

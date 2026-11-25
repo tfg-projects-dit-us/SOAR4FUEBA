@@ -97,6 +97,23 @@ kogito.addon.cloudevents.kafka.kogito_outgoing_stream.<NombreMensaje>=<topic>
 
 En los tests (`src/test/resources/application.properties`) se desactiva el arranque de los consumidores (`spring.kafka.listener.auto-startup=false`), de modo que las pruebas no necesitan un broker Kafka en ejecución.
 
+### Seguridad (usuarios y tareas humanas)
+
+La API REST exige autenticación (HTTP Basic con `spring-boot-starter-security`), excepto `/actuator/health`. Kogito toma de Spring Security el usuario y sus grupos (`kogito.security.auth.enabled=true`), y con esa identidad decide qué tareas humanas puede ver, reclamar o completar cada uno: los grupos del usuario deben coincidir con los `GroupId` de la tarea en el BPMN.
+
+De momento los usuarios son **de prueba** y se definen en `application.properties`:
+
+```properties
+soar.security.users.analista.password={noop}analista
+soar.security.users.analista.groups=soc
+```
+
+```sh
+curl -u analista:analista http://localhost:8080/usertasks/instance
+```
+
+Los parámetros `?user=&group=` solo sirven para actuar en nombre de otro si el usuario autenticado tiene un grupo de `kogito.security.auth.impersonation.allowed-for-roles` (por defecto `admin`). Para conectar un proveedor de identidad real (Keycloak/OIDC, LDAP...) basta con cambiar [SeguridadConfig](src/main/java/us/dit/ueba/soar/security/SeguridadConfig.java).
+
 ## Ejecución
 
 Para compilar y arrancar la aplicación:

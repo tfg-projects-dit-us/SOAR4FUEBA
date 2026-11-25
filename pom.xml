@@ -76,6 +76,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
+    <!-- Autenticación de la API REST. Kogito obtiene el usuario y sus grupos del contexto de
+         Spring Security (SpringIdentityProvider). Ver us.dit.ueba.soar.security.SeguridadConfig -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

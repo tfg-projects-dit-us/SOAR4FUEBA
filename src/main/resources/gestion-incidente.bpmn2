@@ -54,9 +54,11 @@
       <outgoing>_C8566A12-A9F8-4FA1-A5CF-4E8C927999FA</outgoing>
       <ioSpecification id="_09170C75-3CB6-489F-A882-38641583053A">
         <dataInput id="_39EFA312_TaskNameInput" name="TaskName" drools:dtype="Object" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+        <dataInput id="_39EFA312_GroupIdInput" name="GroupId" drools:dtype="Object" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
         <dataOutput name="resuelta" id="_AC2B17C9-3C09-4E3B-9C24-07BD9A6A02F5" drools:dtype="Boolean" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
         <inputSet id="_37655A7B-0714-49CF-96F4-620FBEB43D3A">
           <dataInputRefs>_39EFA312_TaskNameInput</dataInputRefs>
+          <dataInputRefs>_39EFA312_GroupIdInput</dataInputRefs>
         </inputSet>
         <outputSet id="_74F8B64C-6876-40FA-A769-52C5D49DBB37">
           <dataOutputRefs>_AC2B17C9-3C09-4E3B-9C24-07BD9A6A02F5</dataOutputRefs>
@@ -67,6 +69,13 @@
         <assignment>
           <from xsi:type="tFormalExpression">RevisarIncidencia</from>
           <to xsi:type="tFormalExpression">_39EFA312_TaskNameInput</to>
+        </assignment>
+      </dataInputAssociation>
+      <dataInputAssociation>
+        <targetRef>_39EFA312_GroupIdInput</targetRef>
+        <assignment>
+          <from xsi:type="tFormalExpression">soc</from>
+          <to xsi:type="tFormalExpression">_39EFA312_GroupIdInput</to>
         </assignment>
       </dataInputAssociation>
       <dataOutputAssociation id="_09ECDE79-14EA-4385-9865-8B6ED95DBDC5">

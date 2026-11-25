@@ -40,6 +40,7 @@ public class GreetingsTest {
     public void testOrderProcess() throws Exception {
         RestAssured.port = randomServerPort;
         given()
+                .auth().preemptive().basic("analista", "analista")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body("{}")
