@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+  Copyright 2026 Universidad de Sevilla/Departamento de Ingeniería Telemática
+  Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+  This file is part of SOAR4FUEBA - A SOAR solution based on BPM paradigm.
+
+  Consola SOC: gestión de las tareas humanas del grupo SOC. Usa la API /soc/api (TareasSocController).
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola SOC · SOAR4FUEBA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+<header class="barra">
+    <div class="marca">
+        <span class="logo" aria-hidden="true">◆</span>
+        <span>SOAR4FUEBA</span>
+        <span class="separador">/</span>
+        <span class="seccion">Consola SOC</span>
+    </div>
+    <div id="sesion" class="sesion" hidden>
+        <span id="usuario" class="usuario"></span>
+        <span id="grupos" class="grupos"></span>
+        <button id="salir" class="boton boton-secundario" type="button">Salir</button>
+    </div>
+</header>
+
+<!-- Acceso -->
+<main id="vista-acceso" class="acceso">
+    <form id="form-acceso" class="tarjeta acceso-tarjeta" autocomplete="on">
+        <h1>Acceso a la consola SOC</h1>
+        <p class="tenue">Introduce tus credenciales para gestionar las tareas de tu grupo.</p>
+        <label>Usuario
+            <input id="acceso-usuario" name="username" autocomplete="username" required autofocus>
+        </label>
+        <label>Contraseña
+            <input id="acceso-clave" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <p id="acceso-error" class="error" hidden></p>
+        <button class="boton boton-primario" type="submit">Entrar</button>
+    </form>
+</main>
+
+<!-- Consola -->
+<main id="vista-consola" class="consola" hidden>
+    <section class="panel lista" aria-label="Tareas">
+        <div class="pestanas" role="tablist">
+            <button class="pestana activa" role="tab" data-estado="pendientes" aria-selected="true">
+                Pendientes <span class="contador" id="n-pendientes">0</span>
+            </button>
+            <button class="pestana" role="tab" data-estado="terminadas" aria-selected="false">
+                Terminadas <span class="contador" id="n-terminadas">0</span>
+            </button>
+        </div>
+        <div class="filtros">
+            <select id="filtro" aria-label="Filtrar tareas">
+                <option value="todas">Todas</option>
+                <option value="libres">Sin asignar</option>
+                <option value="mias">Mías</option>
+            </select>
+            <input id="buscar" type="search" placeholder="Buscar…" aria-label="Buscar tareas">
+            <button id="refrescar" class="boton boton-secundario" type="button" title="Actualizar">↻</button>
+        </div>
+        <ul id="tareas" class="tareas"></ul>
+        <p id="lista-vacia" class="vacio" hidden>No hay tareas.</p>
+    </section>
+
+    <section id="detalle" class="panel detalle" aria-live="polite">
+        <div class="vacio detalle-vacio">
+            <p>Selecciona una tarea para consultarla.</p>
+        </div>
+    </section>
+</main>
+
+<div id="avisos" class="avisos" aria-live="assertive"></div>
+</body>
+</html>

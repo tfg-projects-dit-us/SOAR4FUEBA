@@ -114,6 +114,38 @@ curl -u analista:analista http://localhost:8080/usertasks/instance
 
 Los parámetros `?user=&group=` solo sirven para actuar en nombre de otro si el usuario autenticado tiene un grupo de `kogito.security.auth.impersonation.allowed-for-roles` (por defecto `admin`). Para conectar un proveedor de identidad real (Keycloak/OIDC, LDAP...) basta con cambiar [SeguridadConfig](src/main/java/us/dit/ueba/soar/security/SeguridadConfig.java).
 
+### Consola SOC (gestión de tareas humanas)
+
+Interfaz web para los analistas del grupo `soc`, en http://localhost:8080/soc/. Tras identificarse, el usuario puede:
+
+- ver sus tareas **pendientes** (las de sus grupos, libres o reclamadas) y las **terminadas**, filtrarlas (todas, sin asignar, mías) y buscar en ellas. La lista se refresca cada 15 segundos;
+- **consultar** una tarea: la incidencia, los datos de la tarea y las variables de la instancia del proceso;
+- **reclamarla** (o liberarla), **ejecutarla** rellenando su resultado (se puede guardar como borrador) y **cerrarla** (completarla). El formulario se construye a partir de las variables de salida de la tarea en el BPMN, así que sirve para cualquier tarea humana sin tocar la página.
+
+Piezas:
+
+| Pieza | Función |
+|-------|---------|
+| [soc/index.html, app.js, styles.css](src/main/resources/META-INF/resources/soc) | Página (HTML + JavaScript sin dependencias externas) |
+| [TareasSocController](src/main/java/us/dit/ueba/soar/gui/TareasSocController.java) | API REST `/soc/api` sobre el `UserTaskService` de Kogito |
+| [HistorialTareas](src/main/java/us/dit/ueba/soar/gui/HistorialTareas.java) | Guarda las tareas terminadas, porque Kogito las borra al terminar |
+
+API (`/soc/api`, con la identidad del usuario autenticado):
+
+| Método y ruta | Descripción |
+|---------------|-------------|
+| `GET /yo` | Usuario y grupos |
+| `GET /tareas?estado=pendientes\|terminadas` | Lista de tareas |
+| `GET /tareas/{id}` | Detalle: tarea, transiciones permitidas, campos del formulario y variables del proceso |
+| `POST /tareas/{id}/{claim\|release\|complete\|skip}` | Transición; en `complete` el cuerpo lleva las salidas (`{"resuelta": true}`) |
+| `PUT /tareas/{id}/salidas` | Guarda el resultado sin completar la tarea |
+
+Notas:
+
+- La página es pública, pero la API exige autenticación. La página envía las credenciales por HTTP Basic en cada petición y las guarda en `sessionStorage` hasta que se cierra la pestaña o se pulsa *Salir*. Al cambiar a un proveedor de identidad real habría que adaptar el acceso de [app.js](src/main/resources/META-INF/resources/soc/app.js).
+- **El histórico de tareas terminadas está en memoria**: se pierde al reiniciar y guarda como mucho `soar.gui.historial.maximo` tareas (1000 por defecto).
+- Para que el analista vea la incidencia al revisar la tarea, `Revisar-incidencia` recibe ahora la variable `incidencia` como dato de entrada en [gestion-incidente.bpmn2](src/main/resources/gestion-incidente.bpmn2).
+
 ## Ejecución
 
 Para compilar y arrancar la aplicación:
@@ -121,6 +153,8 @@ Para compilar y arrancar la aplicación:
 ```sh
 mvn clean package spring-boot:run
 ```
+
+Para tener el bróker de kafka activo se puede usar la imagen de docker https://hub.docker.com/r/apache/kafka
 
 ### Esquemas OCSF: no hay que ejecutar nada antes
 

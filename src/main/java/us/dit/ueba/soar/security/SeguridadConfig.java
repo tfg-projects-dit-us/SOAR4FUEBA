@@ -57,6 +57,10 @@ public class SeguridadConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(peticiones -> peticiones
                         .requestMatchers("/actuator/health/**").permitAll()
+                        // Consola SOC: la página (HTML, JS, CSS) es pública; los datos se piden a /soc/api con
+                        // las credenciales que introduce el usuario en su pantalla de acceso
+                        .requestMatchers("/soc/api/**").authenticated()
+                        .requestMatchers("/soc", "/soc/**").permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .build();
