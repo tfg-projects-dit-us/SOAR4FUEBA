@@ -57,6 +57,7 @@ import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import us.dit.ueba.soar.services.LogsService;
 import us.dit.ueba.soar.utils.KieTestUtils;
+import us.dit.ueba.soar.utils.OcsfTestData;
 
 /**
  * Prueba de extremo a extremo del proceso gestion-incidente a través de Kafka.
@@ -111,7 +112,7 @@ class GestionIncidenteKafkaTest {
 
     @Test
     void unMensajeKafkaArrancaElProcesoDeGestionDeIncidente() throws Exception {
-        String incidencia = "Acceso sospechoso al servidor de nóminas " + UUID.randomUUID();
+        String incidencia = OcsfTestData.detectionFinding("Acceso sospechoso al servidor de nóminas " + UUID.randomUUID());
 
         kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
 
@@ -140,7 +141,7 @@ class GestionIncidenteKafkaTest {
      */
     @Test
     void laRevisionDeLaIncidenciaSeRepiteHastaQueSeResuelve() throws Exception {
-        String incidencia = "Escalada de privilegios en el controlador de dominio " + UUID.randomUUID();
+        String incidencia = OcsfTestData.detectionFinding("Escalada de privilegios en el controlador de dominio " + UUID.randomUUID());
         kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
         String idInstancia = esperarInstancia(incidencia).id();
 
@@ -196,7 +197,7 @@ class GestionIncidenteKafkaTest {
     @Test
     void laTareaHumanaSeGestionaPorRestConElUsuarioAutenticado() throws Exception {
         RestAssured.port = puerto;
-        String incidencia = "Exfiltración de datos por DNS " + UUID.randomUUID();
+        String incidencia = OcsfTestData.detectionFinding("Exfiltración de datos por DNS " + UUID.randomUUID());
         kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
         String idInstancia = esperarInstancia(incidencia).id();
         String idTarea = esperarTareaActiva(idInstancia).getId();
@@ -240,16 +241,7 @@ class GestionIncidenteKafkaTest {
      * mensaje BPMN y {@code data} es el contenido que se asigna a la variable del proceso.
      */
     private static String cloudEvent(String tipo, String datos) {
-        return """
-                {
-                  "specversion": "1.0",
-                  "id": "%s",
-                  "source": "/tests/gestion-incidente",
-                  "type": "%s",
-                  "datacontenttype": "application/json",
-                  "data": "%s"
-                }
-                """.formatted(UUID.randomUUID(), tipo, datos);
+        return OcsfTestData.cloudEvent(tipo, datos);
     }
 
     private ProcessInstance<? extends Model> esperarInstancia(String incidencia) throws InterruptedException {

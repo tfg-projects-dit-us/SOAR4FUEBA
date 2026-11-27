@@ -12,10 +12,11 @@
     </operation>
   </interface>
   <process id="gestion_incidente" name="gestion-incidente" drools:packageName="us.dit.ueba.soar" drools:version="1.0" isExecutable="true" processType="Public">
+    <extensionElements />
     <property id="_8B197D26-0DC5-4A67-A81A-530719BA7400" name="user" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
     <property id="_C4DF1F3F-06A9-4F2E-8C59-EC7B4068D3EA" name="level" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
     <property id="_36895BE1-80E4-4405-B232-16FC0F7783A8" name="resuelta" itemSubjectRef="_5CBD3128-0FDD-4B58-B7F2-BFBC60245C25" />
-    <property id="_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C" name="incidencia" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />
+    <property id="_7E4C2B1A-5D3F-4A8E-9C6B-2F1D0E9A8B7C" name="incidencia" itemSubjectRef="incidenciaType" />
     <startEvent id="_8360BC4E-2B2D-4DB6-BB53-97309EE5887C" name="detectionfinding">
       <outgoing>_28799762-18A3-4E64-9411-DFCAEC59DFC7</outgoing>
       <dataOutput name="incidencia" id="_1A96E989-838D-4369-A8DA-CB60DA6A3477" drools:dtype="String" itemSubjectRef="_A13C8801-28F2-4795-B2C4-5E98E5D66595" />

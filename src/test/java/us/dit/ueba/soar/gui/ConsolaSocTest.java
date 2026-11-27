@@ -45,6 +45,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import us.dit.ueba.soar.KogitoApplication;
+import us.dit.ueba.soar.utils.OcsfTestData;
 
 /**
  * Prueba de la consola SOC ({@code /soc/}) y su API ({@link TareasSocController}): un analista ve la tarea
@@ -91,9 +92,11 @@ class ConsolaSocTest {
 
     @Test
     void elAnalistaConsultaReclamaEjecutaYCierraLaTarea() throws Exception {
-        String incidencia = "Movimiento lateral desde el equipo de contabilidad " + UUID.randomUUID();
-        kafka.send(TOPIC, cloudEvent(incidencia)).get();
-        String id = esperarTareaPendiente(incidencia);
+        // El título único identifica la tarea; la incidencia es el evento OCSF completo
+        String titulo = "Movimiento lateral desde el equipo de contabilidad " + UUID.randomUUID();
+        String incidencia = OcsfTestData.detectionFinding(titulo);
+        kafka.send(TOPIC, OcsfTestData.cloudEvent("detectionfinding", incidencia)).get();
+        String id = esperarTareaPendiente(titulo);
 
         // Consultar: datos de la tarea, incidencia, contexto del proceso y formulario de salida
         analista().get("/soc/api/tareas/{id}", id).then().statusCode(200)
@@ -155,30 +158,17 @@ class ConsolaSocTest {
         return given().auth().preemptive().basic("analista", "analista");
     }
 
-    /** Espera a que el analista vea una tarea pendiente para la incidencia y devuelve su id. */
-    private String esperarTareaPendiente(String incidencia) throws InterruptedException {
+    /** Espera a que el analista vea una tarea pendiente cuya incidencia contenga el título y devuelve su id. */
+    private String esperarTareaPendiente(String titulo) throws InterruptedException {
         Instant limite = Instant.now().plus(ESPERA);
         while (Instant.now().isBefore(limite)) {
             List<String> ids = analista().get("/soc/api/tareas").then().statusCode(200).extract()
-                    .jsonPath().getList("findAll { it.entradas.incidencia == '%s' }.id".formatted(incidencia));
+                    .jsonPath().getList("findAll { it.entradas.incidencia?.contains('%s') }.id".formatted(titulo));
             if (!ids.isEmpty()) {
                 return ids.get(0);
             }
             Thread.sleep(200);
         }
-        throw new AssertionError("No aparece ninguna tarea pendiente para la incidencia: " + incidencia);
-    }
-
-    private static String cloudEvent(String datos) {
-        return """
-                {
-                  "specversion": "1.0",
-                  "id": "%s",
-                  "source": "/tests/consola-soc",
-                  "type": "detectionfinding",
-                  "datacontenttype": "application/json",
-                  "data": "%s"
-                }
-                """.formatted(UUID.randomUUID(), datos);
+        throw new AssertionError("No aparece ninguna tarea pendiente para la incidencia: " + titulo);
     }
 }

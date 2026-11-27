@@ -187,29 +187,44 @@ Más detalles sobre OCSF en el proyecto en [ocsf.md](ocsf.md).
 
 ## Pruebas
 
-La versión inicial, generada a través del arquetipo comes with sample test process that allows you to verify if the application is working as expected. Simply execute following command to try it out
+La versión inicial, generada a través del arquetipo incluye algunos procesos de test que permiten verificar si la aplicación funciona adecuadamente, por ahora se han manenido
 
 ```sh
 curl -d '{}' -H "Content-Type: application/json" -X POST http://localhost:8080/greetings
                                                              
 ```
 
-Once successfully invoked you should see "Hello World" in the console of the running application.
+Se debe ver "Hello World" en el terminal de ejecución de la aplicación.
 
-The generated application provides out of the box multiple samples of Kogito assets; you can reference the generated Swagger documentation and JUnit tests.
+Se proporcionan ejemplos de activos Kogito; la documentación swagger generada y los test unidad pueden ser útiles para entender el funcionamiento, por eso se mantiene.
 
 ## Desarrollo
 
-Add your business assets resources (process definition, rules, decisions) into src/main/resources.
+Los activos (procesos, reglas, decisiones) se deben añadir en el paquete src/main/resources.
 
-Add your java classes (data model, utilities, services) into src/main/java.
+El código java (data model, utilities, services) en src/main/java.
 
-Then just build the project and run.
+A continuación construye y ejecuta
+```
+mvn clean spring-boot:run
+```
 
 
-## OpenAPI (Swagger) documentation
-[Specification at swagger.io](https://swagger.io/docs/specification/about/)
+## Documentación OpenAPI (Swagger)
+[Especificación en swagger.io](https://swagger.io/docs/specification/about/)
 
-You can take a look at the [OpenAPI definition](http://localhost:8080/v3/api-docs) - automatically generated and included in this service - to determine all available operations exposed by this service. For easy readability you can visualize the OpenAPI definition file using a UI tool like for example available [Swagger UI](https://editor.swagger.io).
+Consultar la [definición OpenAPI](http://localhost:8080/v3/api-docs) - que se genera automáticamente y ya está incluida en el servicio. 
 
-In addition, various clients to interact with this service can be easily generated using this OpenAPI definition.
+Puede usar alguna herramienta para la visualización de OpenAPI de forma más sencilla, como [Swagger UI](https://editor.swagger.io).
+
+Se pueden crear clientes para interaccionar con el servicio usando esta definición OpenAPI
+
+## Estado actual (27/11/2026)
+Actualmente el proyecto presenta el adamiaje para desarrollar los procesos de interés y que estos reaccionen a eventos cloud que porten mensajes ocsf, pudiendo luego convertirlos a pojos fácilmente manejables.
+
+Se ha creado un proceso demo que se instancia al recibir un tipo de mensaje ocsf específico (en este caso un DetectionFinding).
+
+El servicio LogsService simplemente valida el mensaje, lo convierte al pojo del mismo y muestra algunos campos.
+
+Una sencilla interfaz gráfica permite ejecutar las tareas humanas que se generan durante el proceso.
+
