@@ -14,6 +14,6 @@ public class LogsService {
     private static final Logger LOG = LoggerFactory.getLogger(LogsService.class);
 
     public void ajustarLogs(String level,String incidencia) {
-        LOG.info("Ajustando logs para el nivel: {}, incidencia: {}", level, incidencia);
+        LOG.info("Ajustando logs para el nivel: {}, incidencia: {}. TODO implementar la llamada al productor de comandos openC2", level, incidencia);
     }
 }

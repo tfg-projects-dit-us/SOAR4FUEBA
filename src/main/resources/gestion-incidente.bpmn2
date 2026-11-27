@@ -44,8 +44,11 @@
     <userTask id="_39EFA312-6BD5-4A06-8B89-2C0C5087279B" name="Revisar-incidencia">
       <extensionElements>
         <drools:onEntry-script scriptFormat="http://www.java.com/java">
-          <drools:script>kcontext.setVariable(&quot;resuelta&quot;, false);</drools:script>
+          <drools:script>kcontext.setVariable(&quot;resuelta&quot;, false);System.out.println(&quot;Iniciando revisión de incidencia&quot;);</drools:script>
         </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="http://www.java.com/java">
+          <drools:script>System.out.println(&quot;Finalizando revisión de incidencia&quot;);</drools:script>
+        </drools:onExit-script>
         <drools:metaData name="elementname">
           <drools:metaValue>Revisar-incidencia</drools:metaValue>
         </drools:metaData>
@@ -115,6 +118,9 @@
         <drools:onEntry-script scriptFormat="http://www.java.com/java">
           <drools:script>kcontext.setVariable(&quot;level&quot;,&quot;uno&quot;);</drools:script>
         </drools:onEntry-script>
+        <drools:onExit-script scriptFormat="">
+          <drools:script></drools:script>
+        </drools:onExit-script>
       </extensionElements>
       <incoming>_28799762-18A3-4E64-9411-DFCAEC59DFC7</incoming>
       <outgoing>_92ADB633-A9D1-470D-8B52-672CA019EC6B</outgoing>
