@@ -158,9 +158,11 @@ Para tener el bróker de kafka activo se puede usar la imagen de docker https://
 
 ### Esquemas OCSF: no hay que ejecutar nada antes
 
+Los POJO para la gestión de mensajes ocsf se generan a partir de los esquemas, que están disponibles online y se descargan dinámicamente, según la configuración en application.properties (sólo los esquemas que se necesitan)
+
 Los esquemas OCSF se preparan con el script [src/codegen/ocsf-schemas.groovy](src/codegen/ocsf-schemas.groovy), pero **no hay que lanzarlo a mano**. Maven lo ejecuta solo en la fase `generate-sources`, que forma parte de `compile`, `test` y `package`. Cada build hace lo siguiente, en orden:
 
-1. **`generate-sources`:** el script lee `ocsf.classes` de `application.properties` y descarga de https://schema.ocsf.io el esquema de las clases que no estén ya en `src/main/resources/ocsf/schema/classes/`. Después, jsonschema2pojo genera las clases Java (`DetectionFinding`, `IncidentFinding`...) en `target/generated-sources/jsonschema2pojo`.
+1. **`generate-sources`:** el script lee `ocsf.classes` de `application.properties` y descarga de https://schema.ocsf.io el esquema de las clases que no estén ya en `src/main/resources/ocsf/schema/classes/`. Después, jsonschema2pojo genera las clases Java (`DetectionFinding`, `IncidentFinding`...) en `target/generated-sources/jsonschema2pojo`. ¡¡OJO, estas clases están en target, no en el código fuente del proyecto, porque se generan dinámicamente!!
 2. **`compile`:** se compila el código del proyecto junto con esas clases generadas.
 3. **`process-classes`:** Kogito genera el código de los procesos BPMN y las decisiones DMN.
 4. **`test` y `package`:** se ejecutan los tests y se empaqueta el jar.
@@ -178,7 +180,7 @@ Algunas consecuencias prácticas:
 
     Revisa los cambios con `git diff src/main/resources/ocsf` antes de subirlos: una versión nueva de OCSF puede renombrar o eliminar atributos.
 
-- **Para generar solo las clases OCSF**, sin compilar el resto ni ejecutar los tests: `mvn generate-sources`.
+- **Para generar solo las clases OCSF (POJOS)**, sin compilar el resto ni ejecutar los tests: `mvn generate-sources`.
 - **Si el IDE no reconoce las clases generadas** (`package us.dit.ueba.soar.ocsf does not exist`), ejecuta `mvn compile` y recarga el proyecto. En VS Code: *Java: Clean Java Language Server Workspace*.
 
 Más detalles sobre OCSF en el proyecto en [ocsf.md](ocsf.md).

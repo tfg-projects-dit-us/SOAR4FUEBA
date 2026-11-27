@@ -23,17 +23,32 @@ import java.time.Duration;
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Configuración OCSF (prefijo {@code ocsf} en application.properties).
  * Las mismas propiedades las lee el build en src/codegen/ocsf-schemas.groovy.
  *
- * @param classes clases OCSF de interés (p.ej. detection_finding)
- * @param schema  de dónde se obtienen los esquemas
+ * @param classes     clases OCSF de interés (p.ej. detection_finding)
+ * @param schema      de dónde se obtienen los esquemas
+ * @param javaPackage paquete de los POJOs generados en el build. Debe coincidir con la propiedad
+ *                    {@code ocsf.java.package} del pom (por defecto {@value #DEFAULT_JAVA_PACKAGE})
  */
 @ConfigurationProperties(prefix = "ocsf")
-public record OcsfProperties(@DefaultValue List<String> classes, @DefaultValue Schema schema) {
+public record OcsfProperties(@DefaultValue List<String> classes, @DefaultValue Schema schema,
+        @DefaultValue(DEFAULT_JAVA_PACKAGE) String javaPackage) {
+
+    public static final String DEFAULT_JAVA_PACKAGE = "us.dit.ueba.soar.ocsf";
+
+    @ConstructorBinding
+    public OcsfProperties {
+    }
+
+    /** Con el paquete de POJOs por defecto. */
+    public OcsfProperties(List<String> classes, Schema schema) {
+        this(classes, schema, DEFAULT_JAVA_PACKAGE);
+    }
 
     /**
      * @param serverUrl       servidor OCSF del que se descargan los esquemas que no vengan en el classpath

@@ -79,7 +79,7 @@ import us.dit.ueba.soar.utils.KieTestUtils;
 @DirtiesContext
 class GestionIncidenteKafkaTest {
 
-    /** Topic asociado al mensaje "incidencia" en application.properties */
+    /** Topic asociado al mensaje "detectionfinding" en application.properties */
     static final String TOPIC = "soar-alertas";
 
     private static final Duration ESPERA = Duration.ofSeconds(30);
@@ -113,7 +113,7 @@ class GestionIncidenteKafkaTest {
     void unMensajeKafkaArrancaElProcesoDeGestionDeIncidente() throws Exception {
         String incidencia = "Acceso sospechoso al servidor de nóminas " + UUID.randomUUID();
 
-        kafka.send(TOPIC, cloudEvent("incidencia", incidencia)).get();
+        kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
 
         // La tarea de servicio "Ajustar logs" recibe la incidencia del mensaje y el nivel
         // que fija su script de entrada (level = "uno")
@@ -141,7 +141,7 @@ class GestionIncidenteKafkaTest {
     @Test
     void laRevisionDeLaIncidenciaSeRepiteHastaQueSeResuelve() throws Exception {
         String incidencia = "Escalada de privilegios en el controlador de dominio " + UUID.randomUUID();
-        kafka.send(TOPIC, cloudEvent("incidencia", incidencia)).get();
+        kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
         String idInstancia = esperarInstancia(incidencia).id();
 
         // 1. Se crea la tarea humana, activa y sin propietario todavía
@@ -197,7 +197,7 @@ class GestionIncidenteKafkaTest {
     void laTareaHumanaSeGestionaPorRestConElUsuarioAutenticado() throws Exception {
         RestAssured.port = puerto;
         String incidencia = "Exfiltración de datos por DNS " + UUID.randomUUID();
-        kafka.send(TOPIC, cloudEvent("incidencia", incidencia)).get();
+        kafka.send(TOPIC, cloudEvent("detectionfinding", incidencia)).get();
         String idInstancia = esperarInstancia(incidencia).id();
         String idTarea = esperarTareaActiva(idInstancia).getId();
 
@@ -269,6 +269,8 @@ class GestionIncidenteKafkaTest {
     /** Tareas de usuario activas (no terminadas) de una instancia de proceso, vistas por {@link #ANALISTA}. */
     private List<UserTaskView> tareasActivas(String idInstancia) {
         return userTasks.list(ANALISTA).stream()
+                // Una tarea recién creada puede listarse un instante antes de tener asignado su processInfo
+                .filter(t -> t.getProcessInfo() != null)
                 .filter(t -> idInstancia.equals(t.getProcessInfo().getProcessInstanceId()))
                 .filter(t -> !t.getStatus().isTerminate())
                 .toList();

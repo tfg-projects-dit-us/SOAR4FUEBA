@@ -29,10 +29,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -76,7 +79,8 @@ public class OcsfSchemaRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(OcsfSchemaRegistry.class);
 
-    private record Entry(String name, JsonSchema schema) {
+    /** @param javaType POJO generado para la clase, o {@code null} si no lo hay (esquema obtenido al arrancar) */
+    private record Entry(String name, JsonSchema schema, Class<?> javaType) {
     }
 
     // Los esquemas OCSF son draft-07 pero agrupan los objetos en "$defs" (palabra clave de 2019-09):
@@ -155,6 +159,15 @@ public class OcsfSchemaRegistry {
         return byClassUid.containsKey(classUid);
     }
 
+    /**
+     * POJO generado en el build para la clase OCSF indicada (p.ej. 2004 → {@code DetectionFinding}).
+     *
+     * @return vacío si la clase no está registrada o no tiene POJO (su esquema se obtuvo al arrancar, sin recompilar)
+     */
+    public Optional<Class<?>> javaType(int classUid) {
+        return Optional.ofNullable(byClassUid.get(classUid)).map(Entry::javaType);
+    }
+
     /** Nombres de las clases OCSF cargadas, por class_uid. */
     public Map<Integer, String> loadedClasses() {
         Map<Integer, String> names = new TreeMap<>();
@@ -173,7 +186,26 @@ public class OcsfSchemaRegistry {
             LOG.warn("OCSF: el esquema de {} no declara class_uid; se ignora", name);
             return;
         }
-        byClassUid.put(classUid.asInt(), new Entry(name, factory.getSchema(schema)));
+        byClassUid.put(classUid.asInt(), new Entry(name, factory.getSchema(schema), javaTypeOf(name)));
+    }
+
+    /**
+     * POJO de una clase OCSF. El build lo genera como {@code <ocsf.java-package>.<NombreEnCamelCase>}
+     * (detection_finding → DetectionFinding), igual que src/codegen/ocsf-schemas.groovy.
+     */
+    private Class<?> javaTypeOf(String name) {
+        String camel = Arrays.stream(name.split("_"))
+                .filter(part -> !part.isEmpty())
+                .map(part -> Character.toUpperCase(part.charAt(0)) + part.substring(1))
+                .collect(Collectors.joining());
+        String className = properties.javaPackage() + "." + camel;
+        try {
+            return Class.forName(className, false, getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            LOG.info("OCSF: {} no tiene POJO ({}); se podrá validar, pero no convertir a una clase Java", name,
+                    className);
+            return null;
+        }
     }
 
     private JsonNode fromClasspath(String name) {

@@ -175,7 +175,7 @@ class ConsolaSocTest {
                   "specversion": "1.0",
                   "id": "%s",
                   "source": "/tests/consola-soc",
-                  "type": "incidencia",
+                  "type": "detectionfinding",
                   "datacontenttype": "application/json",
                   "data": "%s"
                 }

@@ -72,19 +72,49 @@ Las clases generadas no se guardan en git: se crean en cada build. Si el IDE mar
 
 ### Uso desde el código
 
-```java
-// Deserializar un mensaje a su clase tipada
-DetectionFinding finding = objectMapper.readValue(json, DetectionFinding.class);
-String titulo = finding.getFindingInfo().getTitle();
+Para validar mensajes se usa [OcsfMessageValidator](src/main/java/us/dit/ueba/soar/services/ocsf/OcsfMessageValidator.java), un bean común a todas las clases OCSF: deduce la clase del `class_uid` del evento. Se inyecta ya configurado, **no hay que registrar ningún esquema**: `OcsfSchemaRegistry` carga los de `ocsf.classes` al arrancar. Acepta el mensaje tal como llega de Kafka (texto JSON), suelto o dentro de un CloudEvent (valida su `data`), y también `JsonNode`, `Map` o un POJO generado.
 
-// Validar un mensaje contra el esquema oficial de su clase (según class_uid)
-JsonNode evento = objectMapper.readTree(json);
-if (registry.isSupported(evento.path("class_uid").asInt())) {
-    Set<ValidationMessage> errores = registry.validate(evento);
+```java
+@Service
+public class MiServicio {
+
+    private final OcsfMessageValidator validador;
+
+    public MiServicio(OcsfMessageValidator validador) {   // inyección de Spring
+        this.validador = validador;
+    }
+
+    void procesar(String mensaje) {
+        // 1. Resultado con todos los errores, sin excepciones
+        OcsfValidationResult r = validador.validate(mensaje);
+        if (!r.isValid()) {
+            log.warn("Mensaje {} no válido: {}", r.className(), r.errors());
+        }
+
+        // 2. Solo sí/no (p.ej. tarea de servicio seguida de una puerta de enlace en el BPMN)
+        boolean ok = validador.isValid(mensaje);
+
+        // 3. Obtener el evento o su POJO; lanza OcsfValidationException si no es válido
+        JsonNode evento = validador.requireValid(mensaje);
+        DetectionFinding finding = validador.readValid(mensaje, DetectionFinding.class);
+
+        // 4. Actuar según el tipo de mensaje recibido
+        if (r.isValid()) {
+            switch (validador.convert(r)) {          // convierte al POJO de su clase (r.javaType())
+                case DetectionFinding d -> ...
+                case IncidentFinding i -> ...
+                default -> ...
+            }
+        }
+    }
 }
 ```
 
-> **Pendiente:** la validación todavía no está conectada a la recepción de mensajes Kafka del proceso BPMN. `OcsfSchemaRegistry` está disponible como bean, pero falta decidir qué hacer con un mensaje inválido: descartarlo, registrarlo o enviarlo a un topic de errores.
+El resultado indica el tipo de mensaje: `classUid()` (2004), `className()` (`detection_finding`) y `javaType()` (`DetectionFinding.class`). `javaType()` es `null` si la clase no tiene POJO porque su esquema se descargó al arrancar sin recompilar; en ese caso se puede actuar según `className()` y trabajar con `event()`. El paquete de los POJOs es `ocsf.java-package` (por defecto `us.dit.ueba.soar.ocsf`), que debe coincidir con `ocsf.java.package` del pom.
+
+Un mensaje que no es JSON, que no tiene `class_uid` o cuya clase no está en `ocsf.classes` se considera no válido y el motivo aparece en `errors()`.
+
+> **Pendiente:** la validación todavía no está conectada a la recepción de mensajes Kafka del proceso BPMN. Falta decidir qué hacer con un mensaje inválido: descartarlo, registrarlo o enviarlo a un topic de errores.
 
 ## Cómo añadir otros mensajes OCSF
 

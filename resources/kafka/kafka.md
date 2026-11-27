@@ -21,13 +21,15 @@ kogito.addon.cloudevents.kafka.kogito_outgoing_stream.<NombreMensaje>=<topic>
 ```
 Por ejemplo
 ```
-kogito.addon.cloudevents.kafka.kogito_incoming_stream.incidencia=soar-alertas
+kogito.addon.cloudevents.kafka.kogito_incoming_stream.detectionfinding=soar-alertas
 ```
 La configuración es por tipo de mensaje, de modo que se indica el topic en el que se recibirá ese tipo de mensaje, luego en el proceso los eventos se asocian a un tipo de mensaje.
 
+Los tipos de mensaje se nombran según la clase OCSF que transportan: `detectionfinding` lleva un evento OCSF *Detection Finding* (class_uid 2004). El campo `type` del CloudEvent debe coincidir con el nombre del mensaje BPMN; si no coincide, el proceso ignora el mensaje.
+
 Esto permite que en los procesos podamos hacer configuraciones como la mostrada en la figura
-![Suscripción del proceso al mensaje incidencia](SuscripcionProceso.png)
-Donde se configura como evento de inicio de una instancia del proceso la recepción de un mensaje de tipo "incidencia"
+![Suscripción del proceso al mensaje detectionfinding](SuscripcionProceso.png)
+Donde se configura como evento de inicio de una instancia del proceso la recepción de un mensaje de tipo "detectionfinding"
 ## Configuración de kafka
 La forma más fácil de arrancar y configurar kafka es usando docker-compose. El yaml proporcionado permite levantar el broker simplemente ejecutando docker compose up -d. La información completa sobre la imagen docker de kafka se encuentra en https://hub.docker.com/r/apache/kafka
 
@@ -50,9 +52,10 @@ Crear un productor
 ´´´
 .\kafka-console-producer.bat --bootstrap-server localhost:9092 --topic soar-alertas
 ´´´
-Los mensajes deben tener formato cloud events
+Los mensajes deben tener formato cloud events, en una sola línea, con `type` igual al nombre del mensaje BPMN (`detectionfinding`)
 ´´´
-{"specversion":"1.0","id":"prueba-1","source":"/consola","type":"incidencia","datacontenttype":"application/json","data":"Acceso sospechoso al servidor de pagos. TODO: Datos en formato ocsf"}
+{"specversion":"1.0","id":"prueba-1","source":"/consola","type":"detectionfinding","datacontenttype":"application/json","data":"Acceso sospechoso al servidor de pagos. TODO: Datos en formato ocsf"}
 ´´´
+En [cloudeventdetectionfindingsample.json](cloudeventdetectionfindingsample.json) hay un mensaje completo con un evento OCSF Detection Finding en `data`. El evento va como texto JSON escapado (`"data":"{\"class_uid\":2004,...}"`) porque la variable del proceso que lo recibe es de tipo `String`.
 
 
