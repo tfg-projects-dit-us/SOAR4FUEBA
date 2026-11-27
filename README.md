@@ -222,7 +222,9 @@ Se pueden crear clientes para interaccionar con el servicio usando esta definici
 ## Estado actual (27/11/2026)
 Actualmente el proyecto presenta el adamiaje para desarrollar los procesos de interés y que estos reaccionen a eventos cloud que porten mensajes ocsf, pudiendo luego convertirlos a pojos fácilmente manejables.
 
-Se ha creado un proceso demo que se instancia al recibir un tipo de mensaje ocsf específico (en este caso un DetectionFinding).
+Se ha creado un proceso demo, mostrado en la figura, que se instancia al recibir un tipo de mensaje ocsf específico (en este caso un DetectionFinding).
+
+![Proceso demo gestion-incidente](resources/procesodemo.png)
 
 El servicio LogsService simplemente valida el mensaje, lo convierte al pojo del mismo y muestra algunos campos.
 
